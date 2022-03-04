@@ -11,4 +11,4 @@
 1. В проект можно добавить новые сайты без изменения кода.
 2. В проекте можно сделать параллельный парсинг сайтов.
 
-[![Build Status](https://app.travis-ci.com/github/max-piter/job4j_grabber.svg?branch=master)](https://app.travis-ci.com/github/max-piter/job4j_grabber)
+[![Build Status](https://app.travis-ci.com/max-piter/job4j_grabber.svg?branch=master)](https://app.travis-ci.com/github/max-piter/job4j_grabber)
