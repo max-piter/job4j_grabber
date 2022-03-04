@@ -12,3 +12,4 @@
 2. В проекте можно сделать параллельный парсинг сайтов.
 
 [![Build Status](https://app.travis-ci.com/max-piter/job4j_grabber.svg?branch=master)](https://app.travis-ci.com/github/max-piter/job4j_grabber)
+[![codecov](https://codecov.io/gh/max-piter/job4j_grabber/branch/master/graph/badge.svg?token=YLLCJV2C4T)](https://codecov.io/gh/max-piter/job4j_grabber)

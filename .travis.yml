@@ -18,3 +18,7 @@ notifications:
       - butcher_1996@mail.ru
     on_success: never # default: change
     on_failure: always # default: always
+
+env:
+  global:
+    - CODECOV_TOKEN="4f407e39-23cd-4459-ace4-913bc78d610f"
