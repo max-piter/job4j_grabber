@@ -3,9 +3,7 @@ package ru.job4j.quartz;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.util.Objects;
+import java.io.InputStream;
 import java.util.Properties;
 
 import static org.quartz.JobBuilder.*;
@@ -20,17 +18,22 @@ public class AlertRabbit {
     /**
      * Load config properties.
      * Загружаем данные файла rabbit.properties
+     * Для загрузки Properties удобней всего использовать ClassLoader.
+     * Все ресурсные файлы храним в папке resources по пути src/main/resources.
+     * ClassLoader будет искать файлы в этой папке и прописывать путь не нужно.
      *
      * @return the properties
      * @throws Exception the exception
      */
     public static Properties loadConfig(String fileName) throws Exception {
-        String rootPath = Objects.requireNonNull(Thread.currentThread()
-                .getContextClassLoader().getResource("")).getPath();
-        String filePath = rootPath + fileName;
-        Properties properties = new Properties();
-        properties.load(new BufferedInputStream(new FileInputStream(filePath)));
-        return properties;
+        Properties prop =  new Properties();
+        try (InputStream in = AlertRabbit.class.getClassLoader()
+                .getResourceAsStream(fileName)) {
+            prop.load(in);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  prop;
     }
 
     /**
@@ -66,6 +69,7 @@ public class AlertRabbit {
         @Override
         public void execute(JobExecutionContext context) throws JobExecutionException {
             System.out.println("Rabbit runs here ... and there...");
+
         }
     }
 }
