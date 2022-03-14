@@ -65,17 +65,17 @@ public class AlertRabbit {
     /**
      * Gets connection.
      * метод  подключения к базе данных
-     * @param fileName the file name
+     *
      * @return the connection
      * @throws Exception the exception
      */
-    public static Connection getConnection(String fileName) throws Exception {
-        Class.forName(loadConfig(fileName)
+    public static Connection getConnection(Properties config) throws Exception {
+        Class.forName(config
                 .getProperty("driver_class"));
         return DriverManager.getConnection(
-                loadConfig(fileName).getProperty("url"),
-                loadConfig(fileName).getProperty("username"),
-                loadConfig(fileName).getProperty("password"));
+                config.getProperty("url"),
+                config.getProperty("username"),
+                config.getProperty("password"));
     }
 
     /**
@@ -85,9 +85,10 @@ public class AlertRabbit {
      * @throws Exception the exception
      */
     public static void main(String[] args) throws Exception {
-        int interval = Integer.parseInt(loadConfig("rabbit.properties")
-                .getProperty("rabbit.interval"));
-        try (Connection connection =  getConnection("rabbit.properties")) {
+        Properties config = loadConfig("rabbit.properties");
+        int interval = Integer.parseInt(config.getProperty("rabbit.interval"));
+        try (Connection connection =  getConnection(config)) {
+
             executeTable("db/rabbit.sql", connection);
 
             Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
