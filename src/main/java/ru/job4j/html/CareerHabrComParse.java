@@ -12,6 +12,7 @@ import ru.job4j.grabber.utils.CareerHabrDateTimeParser;
  */
 public class CareerHabrComParse {
     public static void main(String[] args) throws Exception {
+
         for (int i = 1; i <= 5; i++) {
             String page = String.valueOf(i);
             Document doc = Jsoup
