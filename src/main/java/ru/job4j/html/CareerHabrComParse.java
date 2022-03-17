@@ -27,6 +27,5 @@ public class CareerHabrComParse {
                         .parse(el.children().get(0).children().get(0).attr("datetime")));
             }
         }
-
     }
 }
