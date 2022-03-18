@@ -9,6 +9,9 @@ import ru.job4j.grabber.utils.CareerHabrDateTimeParser;
 /**
  * The type CareerHabrComParse - парсим HTML страницу
  * ищем вложенные HTML-элементы (children) и собираем по ним необходимую  информацию
+ *
+ * + парсим строку дату в формате Date
+ * + парсим только 5 страниц
  */
 public class CareerHabrComParse {
     public static void main(String[] args) throws Exception {
