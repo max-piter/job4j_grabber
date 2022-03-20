@@ -1,6 +1,9 @@
 package ru.job4j.html;
 
 import org.joda.time.DateTime;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import java.util.Objects;
 
@@ -11,6 +14,9 @@ public class Post {
     private String discription;
     private DateTime created;
 
+    public Post() {
+    }
+
     public Post(int id, String title, String link, String discription, DateTime created) {
         this.id = id;
         this.title = title;
@@ -19,7 +25,17 @@ public class Post {
         this.created = created;
     }
 
-    public Post() {
+    private String retrieveDescription(String link) throws Exception {
+
+        Document doc =  Jsoup
+                .connect(link)
+                .get();
+
+        Elements divElement = doc.getElementsByAttributeValue("class", "style-ugc");
+        discription = divElement.text();
+        System.out.println(discription);
+
+        return discription;
     }
 
     public int getId() {
