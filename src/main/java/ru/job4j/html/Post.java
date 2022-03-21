@@ -20,6 +20,14 @@ public class Post {
         this.created = created;
     }
 
+    public Post(int id, String title, String link, String discription, DateTime created) {
+        this.id = id;
+        this.title = title;
+        this.link = link;
+        this.discription = discription;
+        this.created = created;
+    }
+
     public int getId() {
         return id;
     }
