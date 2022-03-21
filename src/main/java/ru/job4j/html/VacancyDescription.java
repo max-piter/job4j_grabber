@@ -5,6 +5,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 public class VacancyDescription {
+
     private String retrieveDescription(String link) throws Exception {
 
         Document doc =  Jsoup
