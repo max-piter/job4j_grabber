@@ -1,7 +1,6 @@
 package ru.job4j.html;
 
 import org.joda.time.DateTime;
-
 import java.util.Objects;
 
 public class Post {
