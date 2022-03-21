@@ -14,7 +14,12 @@ import ru.job4j.grabber.utils.CareerHabrDateTimeParser;
  * + парсим только 5 страниц
  */
 public class CareerHabrComParse {
+    private static final String SOURCE_LINK = "https://career.habr.com";
+    private static String des = null;
+
     public static void main(String[] args) throws Exception {
+        VacancyDescription description = new VacancyDescription();
+        CareerHabrDateTimeParser parser = new CareerHabrDateTimeParser();
 
         for (int i = 1; i <= 5; i++) {
             String page = String.valueOf(i);
@@ -24,11 +29,14 @@ public class CareerHabrComParse {
             Elements row = doc.select(".vacancy-card__inner");
 
             for (Element el : row) {
-                CareerHabrDateTimeParser parser = new CareerHabrDateTimeParser();
-                System.out.println("https://career.habr.com" + el.children().get(1).attr("href"));
                 System.out.println(el.children().get(2).text());
+                des = description.retrieveDescription(SOURCE_LINK + el.children()
+                        .get(1).attr("href"));
+                System.out.println("Описание вакансии: " + des);
+                System.out.println("Ссылка: " + SOURCE_LINK + el.children().get(1).attr("href"));
                 System.out.println(parser
                         .parse(el.children().get(0).children().get(0).attr("datetime")));
+                System.out.println();
             }
         }
     }
