@@ -1,13 +1,12 @@
 package ru.job4j.grabber.utils;
 
-import org.joda.time.DateTime;
-import org.joda.time.format.ISODateTimeFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
-public class CareerHabrDateTimeParser implements DateTimeParser {
+public class CareerHabrDateTimeParser implements LocalDateTimeParser {
 
     @Override
-    public DateTime parse(String parse) {
-        org.joda.time.format.DateTimeFormatter parser2 = ISODateTimeFormat.dateTimeNoMillis();
-        return parser2.parseDateTime(parse);
+    public LocalDateTime parse(String parse) {
+        return  LocalDateTime.parse(parse, DateTimeFormatter.ISO_ZONED_DATE_TIME);
     }
 }
