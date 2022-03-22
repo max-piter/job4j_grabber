@@ -6,7 +6,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import ru.job4j.grabber.utils.CareerHabrDateTimeParser;
 
-
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,24 +14,29 @@ import java.util.List;
  * The type HabrCareerParse - парсим HTML страницу
  * ищем вложенные HTML-элементы (children) и собираем по ним необходимую  информацию
  *
- * + парсим строку дату в формате Date
- * + парсим только 5 страниц
+ * + парсим строку дату в формате LocalDateTime
+ * + парсим описание по ссылке
+ * собираем всю инфу по каждой вакансии в одну модель данных Post,
+ *  а вакансии собираем в список List<Post> list
+ *
  */
 
 public class HabrCareerParse implements Parse {
     private static final String SOURCE_LINK = "https://career.habr.com";
-    private static String des = null;
+   // private static String des = null;
     private final CareerHabrDateTimeParser dateTimeParser;
 
     public HabrCareerParse(CareerHabrDateTimeParser dateTimeParser) {
         this.dateTimeParser = dateTimeParser;
     }
 
-    @Override
-    public List<Post> list(String link) {
-        return null;
-    }
-
+    /**
+     * Retrieve description string. - получаем описание вакансии по ссылке
+     *
+     * @param link the link
+     * @return the string
+     * @throws Exception the exception
+     */
     public String retrieveDescription(String link) throws Exception {
 
         Document doc =  Jsoup
@@ -42,27 +47,61 @@ public class HabrCareerParse implements Parse {
         return divElement.text();
     }
 
-    public static void main(String[] args) throws Exception {
-        CareerHabrDateTimeParser parser = new CareerHabrDateTimeParser();
-        HabrCareerParse description = new HabrCareerParse(parser);
+    /**
+     * Vacancy post формирование всех элементов парсинга
+     * одной вакансии в один  пост Post
+     *
+     * @param el the el (отдельная вакансия, )
+     * @return the post (возвращаем Post  с заполнеными полями, со семи элементами)
+     * @throws Exception the exception
+     */
+    public Post vacancy(Element el) throws Exception {
+        Post post =  new Post();
+        String title = el.children().get(2).text();
+        String discription = retrieveDescription(SOURCE_LINK + el.children()
+                .get(1).attr("href"));
+        LocalDateTime dateTime = dateTimeParser
+                .parse(el.children().get(0).children().get(0).attr("datetime"));
+        post.setCreated(dateTime);
+        post.setDiscription(discription);
+        post.setLink(SOURCE_LINK + el.children().get(1).attr("href"));
+        post.setTitle(title);
+        return post;
+    }
 
-        for (int i = 1; i <= 5; i++) {
-            String page = String.valueOf(i);
+    /**
+     * List list - метод собирает и  возвращает список вакансий, типа Post
+     * с результатами парсинга
+     * @param link - основная ссылка на страницу с вакансиями
+     * @return List<Post> - список вакансий
+     */
+    @Override
+    public List<Post> list(String link) {
+        List<Post> list = new ArrayList<>();
+        try {
             Document doc = Jsoup
-                    .connect("https://career.habr.com/vacancies/java_developer?page=" + page)
+                    .connect(link)
                     .get();
-            Elements row = doc.select(".vacancy-card__inner");
-
-            for (Element el : row) {
-                System.out.println(el.children().get(2).text());
-                des = description.retrieveDescription(SOURCE_LINK + el.children()
-                        .get(1).attr("href"));
-                System.out.println("Описание вакансии: " + des);
-                System.out.println("Ссылка: " + SOURCE_LINK + el.children().get(1).attr("href"));
-                System.out.println(parser
-                        .parse(el.children().get(0).children().get(0).attr("datetime")));
-                System.out.println();
-            }
+        Elements rows = doc.select(".vacancy-card__inner");
+        for (Element el : rows) {
+            list.add(vacancy(el));
         }
+    } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    /**
+     * The entry point of application -проверка метода list, всё работает
+     *
+     * @param args the input arguments
+     *
+     */
+    public static void main(String[] args) {
+        CareerHabrDateTimeParser parser = new CareerHabrDateTimeParser();
+        HabrCareerParse vacancy = new HabrCareerParse(parser);
+        vacancy.list("https://career.habr.com/vacancies/java_developer?page=1");
     }
 }
