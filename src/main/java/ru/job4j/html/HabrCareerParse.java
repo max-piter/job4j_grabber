@@ -6,20 +6,45 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import ru.job4j.grabber.utils.CareerHabrDateTimeParser;
 
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * The type CareerHabrComParse - парсим HTML страницу
+ * The type HabrCareerParse - парсим HTML страницу
  * ищем вложенные HTML-элементы (children) и собираем по ним необходимую  информацию
  *
  * + парсим строку дату в формате Date
  * + парсим только 5 страниц
  */
-public class CareerHabrComParse {
+
+public class HabrCareerParse implements Parse {
     private static final String SOURCE_LINK = "https://career.habr.com";
     private static String des = null;
+    private final CareerHabrDateTimeParser dateTimeParser;
+
+    public HabrCareerParse(CareerHabrDateTimeParser dateTimeParser) {
+        this.dateTimeParser = dateTimeParser;
+    }
+
+    @Override
+    public List<Post> list(String link) {
+        return null;
+    }
+
+    public String retrieveDescription(String link) throws Exception {
+
+        Document doc =  Jsoup
+                .connect(link)
+                .get();
+
+        Elements divElement = doc.getElementsByAttributeValue("class", "style-ugc");
+        return divElement.text();
+    }
 
     public static void main(String[] args) throws Exception {
-        VacancyDescription description = new VacancyDescription();
         CareerHabrDateTimeParser parser = new CareerHabrDateTimeParser();
+        HabrCareerParse description = new HabrCareerParse(parser);
 
         for (int i = 1; i <= 5; i++) {
             String page = String.valueOf(i);
