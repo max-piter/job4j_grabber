@@ -5,6 +5,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import ru.job4j.grabber.utils.CareerHabrDateTimeParser;
+import ru.job4j.grabber.utils.LocalDateTimeParser;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ import java.util.List;
 public class HabrCareerParse implements Parse {
     private static final String SOURCE_LINK = "https://career.habr.com";
     private  static final int PAGES_TO_PARSE = 5;
-    private final CareerHabrDateTimeParser dateTimeParser;
+    private final LocalDateTimeParser dateTimeParser;
 
     public HabrCareerParse(CareerHabrDateTimeParser dateTimeParser) {
         this.dateTimeParser = dateTimeParser;
@@ -35,16 +36,21 @@ public class HabrCareerParse implements Parse {
      *
      * @param link the link
      * @return the string
-     * @throws Exception the exception
+     *
      */
-    public String retrieveDescription(String link) throws Exception {
+    public String retrieveDescription(String link) {
+        String des = null;
+        try {
+            Document doc = Jsoup
+                    .connect(link)
+                    .get();
 
-        Document doc =  Jsoup
-                .connect(link)
-                .get();
-
-        Elements divElement = doc.getElementsByAttributeValue("class", "style-ugc");
-        return divElement.text();
+            Elements divElement = doc.getElementsByAttributeValue("class", "style-ugc");
+            des = divElement.text();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return des;
     }
 
     /**
@@ -53,19 +59,23 @@ public class HabrCareerParse implements Parse {
      *
      * @param el the el (отдельная вакансия, )
      * @return the post (возвращаем Post  с заполнеными полями, со семи элементами)
-     * @throws Exception the exception
+     *
      */
-    public Post vacancy(Element el) throws Exception {
+    public Post vacancy(Element el) {
         Post post =  new Post();
-        String title = el.children().get(2).text();
-        String discription = retrieveDescription(SOURCE_LINK + el.children()
-                .get(1).attr("href"));
-        LocalDateTime dateTime = dateTimeParser
-                .parse(el.children().get(0).children().get(0).attr("datetime"));
-        post.setCreated(dateTime);
-        post.setDiscription(discription);
-        post.setLink(SOURCE_LINK + el.children().get(1).attr("href"));
-        post.setTitle(title);
+        try {
+            String title = el.children().get(2).text();
+            String discription = retrieveDescription(SOURCE_LINK + el.children()
+                    .get(1).attr("href"));
+            LocalDateTime dateTime = dateTimeParser
+                    .parse(el.children().get(0).children().get(0).attr("datetime"));
+            post.setCreated(dateTime);
+            post.setDiscription(discription);
+            post.setLink(SOURCE_LINK + el.children().get(1).attr("href"));
+            post.setTitle(title);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return post;
     }
 
@@ -78,16 +88,20 @@ public class HabrCareerParse implements Parse {
     @Override
     public List<Post> list(String link) {
         List<Post> list = new ArrayList<>();
-        try {
-            Document doc = Jsoup
-                    .connect(link)
-                    .get();
-        Elements rows = doc.select(".vacancy-card__inner");
-        for (Element el : rows) {
-            list.add(vacancy(el));
-        }
-    } catch (Exception e) {
-            e.printStackTrace();
+
+        for (int i = 1; i <= PAGES_TO_PARSE; i++) {
+            String page = String.valueOf(i);
+            try {
+                Document doc = Jsoup
+                        .connect(link + page)
+                        .get();
+                Elements rows = doc.select(".vacancy-card__inner");
+                for (Element el : rows) {
+                    list.add(vacancy(el));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         return list;
@@ -100,8 +114,10 @@ public class HabrCareerParse implements Parse {
      *
      */
     public static void main(String[] args) {
+        List<Post> post;
         CareerHabrDateTimeParser parser = new CareerHabrDateTimeParser();
         HabrCareerParse vacancy = new HabrCareerParse(parser);
-        vacancy.list("https://career.habr.com/vacancies/java_developer?page=1");
+        post =  vacancy.list("https://career.habr.com/vacancies/java_developer?page=");
+        System.out.println(post);
     }
 }
