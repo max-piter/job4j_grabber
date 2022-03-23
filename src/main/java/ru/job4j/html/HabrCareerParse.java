@@ -23,6 +23,7 @@ import java.util.List;
 
 public class HabrCareerParse implements Parse {
     private static final String SOURCE_LINK = "https://career.habr.com";
+    private  static final int PAGES_TO_PARSE = 5;
     private final CareerHabrDateTimeParser dateTimeParser;
 
     public HabrCareerParse(CareerHabrDateTimeParser dateTimeParser) {
