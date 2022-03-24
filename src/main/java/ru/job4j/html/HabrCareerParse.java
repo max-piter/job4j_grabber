@@ -27,7 +27,7 @@ public class HabrCareerParse implements Parse {
     private  static final int PAGES_TO_PARSE = 5;
     private final LocalDateTimeParser dateTimeParser;
 
-    public HabrCareerParse(CareerHabrDateTimeParser dateTimeParser) {
+    public HabrCareerParse(LocalDateTimeParser dateTimeParser) {
         this.dateTimeParser = dateTimeParser;
     }
 
