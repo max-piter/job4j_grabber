@@ -1,6 +1,8 @@
 package ru.job4j.html;
 
+import java.io.InputStream;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -10,8 +12,10 @@ public class PsqlStore implements Store, AutoCloseable {
     private final Connection cnn;
 
     public PsqlStore(Properties cfg) {
-        try {
-            Class.forName(cfg.getProperty("jdbs.driver"));
+        try (InputStream in = PsqlStore.class.getClassLoader()
+                .getResourceAsStream("grabber.properties")) {
+            cfg.load(in);
+            Class.forName(cfg.getProperty("driver_class"));
          cnn = DriverManager.getConnection(
                  cfg.getProperty("url"),
                  cfg.getProperty("username"),
@@ -33,7 +37,7 @@ public class PsqlStore implements Store, AutoCloseable {
     @Override
     public void save(Post post) {
         try (PreparedStatement ps =
-                     cnn.prepareStatement("insert into grabber(title, discription, link, created)"
+                     cnn.prepareStatement("insert into post(title, discription, link, created)"
                                     + " values(?, ?, ?, ?)")) {
             ps.setString(1, post.getTitle());
             ps.setString(2, post.getDiscription());
@@ -48,7 +52,7 @@ public class PsqlStore implements Store, AutoCloseable {
     @Override
     public List<Post> getAll() {
         List<Post> post = new ArrayList<>();
-        try (PreparedStatement ps = cnn.prepareStatement("select * from grabber")) {
+        try (PreparedStatement ps = cnn.prepareStatement("select * from post")) {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     post.add(getPostFromResultSet(rs));
@@ -63,7 +67,7 @@ public class PsqlStore implements Store, AutoCloseable {
     @Override
     public Post findById(int id) {
         Post post = null;
-        try (PreparedStatement ps = cnn.prepareStatement("select * from grabber where id = ?")) {
+        try (PreparedStatement ps = cnn.prepareStatement("select * from post where id = ?")) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -81,5 +85,18 @@ public class PsqlStore implements Store, AutoCloseable {
         if (cnn != null) {
             cnn.close();
         }
+    }
+
+    public static void main(String[] args) {
+        LocalDateTime time = LocalDateTime.now();
+        Post post = new Post("java - developer", "Some special thing",
+                "http//ooo.huyovoe.ru", time);
+        Post post1 = new Post("Scala-developer", "something", "http//ooo.huyovoe.com", time);
+        Properties cfg  = new Properties();
+        PsqlStore psqlStore = new PsqlStore(cfg);
+        psqlStore.save(post);
+        psqlStore.save(post1);
+        System.out.println(psqlStore.findById(1));
+        System.out.println(psqlStore.getAll());
     }
 }
