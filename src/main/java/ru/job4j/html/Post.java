@@ -6,25 +6,25 @@ import java.util.Objects;
 public class Post {
     private int id;
     private String title;
-    private String link;
     private String discription;
+    private String link;
     private LocalDateTime created;
 
     public Post() {
     }
 
-    public Post(String title, String link, String discription, LocalDateTime created) {
+    public Post(String title, String discription, String link, LocalDateTime created) {
         this.title = title;
-        this.link = link;
         this.discription = discription;
+        this.link = link;
         this.created = created;
     }
 
-    public Post(int id, String title, String link, String discription, LocalDateTime created) {
+    public Post(int id, String title, String discription, String link, LocalDateTime created) {
         this.id = id;
         this.title = title;
-        this.link = link;
         this.discription = discription;
+        this.link = link;
         this.created = created;
     }
 
@@ -73,10 +73,9 @@ public class Post {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Post)) {
+        if (!(o instanceof Post post)) {
             return false;
         }
-        Post post = (Post) o;
         return getId() == post.getId() && Objects.equals(getTitle(),
                 post.getTitle()) && Objects.equals(getLink(),
                 post.getLink()) && Objects.equals(getCreated(),

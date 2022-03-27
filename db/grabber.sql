@@ -1,7 +1,7 @@
 create table if not exists post (
      id serial primary key,
-     n_name text,
-     t_text text,
+     title text,
+     discription text,
      link text unique,
-     created_date timestamp
+     created timestamp
 );
