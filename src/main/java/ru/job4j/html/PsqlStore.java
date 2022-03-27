@@ -24,8 +24,8 @@ public class PsqlStore implements Store, AutoCloseable {
     public Post getPostFromResultSet(ResultSet rs) throws SQLException {
         return new Post(
                 rs.getInt("id"),
-                rs.getString("n_name"),
-                rs.getString("t_text"),
+                rs.getString("title"),
+                rs.getString("discription"),
                 rs.getString("link"),
                 rs.getTimestamp("created").toLocalDateTime());
     }
