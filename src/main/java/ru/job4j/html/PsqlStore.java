@@ -90,9 +90,9 @@ public class PsqlStore implements Store, AutoCloseable {
     public static void main(String[] args) {
         LocalDateTime time = LocalDateTime.now();
         Post post = new Post("java - developer", "Some special thing",
-                "http//ooo.huyovoe.ru", time);
-        Post post1 = new Post("Scala-developer", "something", "http//ooo.huyovoe.com", time);
-        Post post2 =  new Post("java-developer", "new project", "http//ooo.huyovoe", time);
+                "http:/ooo.huyovoe.ru", time);
+        Post post1 = new Post("Scala-developer", "something", "http:/ooo.huyovoe.com", time);
+        Post post2 =  new Post("java-developer", "new project", "http:/ooo.huyovoe", time);
         Properties cfg  = new Properties();
         PsqlStore psqlStore = new PsqlStore(cfg);
         psqlStore.save(post);
@@ -100,5 +100,6 @@ public class PsqlStore implements Store, AutoCloseable {
         psqlStore.save(post2);
         System.out.println(psqlStore.findById(1));
         System.out.println(psqlStore.getAll());
+
     }
 }
