@@ -94,8 +94,7 @@ public class PsqlStore implements Store, AutoCloseable {
         Post post1 = new Post("Scala-developer", "something", "http:/ooo.huyovoe.com", time);
         Post post2 =  new Post("java-developer", "new project", "http:/ooo.huyovoe", time);
         Properties cfg  = new Properties();
-        try {
-            PsqlStore psqlStore = new PsqlStore(cfg);
+        try (PsqlStore psqlStore = new PsqlStore(cfg)) {
             psqlStore.save(post);
             psqlStore.save(post1);
             psqlStore.save(post2);
@@ -104,6 +103,5 @@ public class PsqlStore implements Store, AutoCloseable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }
